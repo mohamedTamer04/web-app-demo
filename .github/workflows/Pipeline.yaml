@@ -1,0 +1,53 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # Job to run tests using SonarCloud
+  test:
+    name: Test with SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # SonarCloud token
+
+
+# Job to deploy to Minikube
+  build:
+    name: Build Container Image with Podman
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Podman
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install podman
+
+      - name: Build container image
+        run: podman build -t docker.io/mohamedeid123/java-app-repo:v1.0 .
+
+      - name: Log in to Docker Hub
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo $DOCKER_PASSWORD | podman login --username $DOCKER_USERNAME --password-stdin docker.io
+
+      - name: Push container image to Docker Hub
+        run: podman push docker.io/mohamedeid123/java-app-repo:v1.0
+
