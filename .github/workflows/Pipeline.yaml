@@ -75,7 +75,7 @@ jobs:
          
     - name: Start Minikube
       run: |
-        minikube start --driver podman
+        minikube start
       
     - name: Apply Kubernetes Deployment
       run: kubectl apply -f Deployment-Service.yaml
