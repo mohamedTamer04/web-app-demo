@@ -79,3 +79,6 @@ jobs:
       
     - name: Apply Kubernetes Deployment
       run: kubectl apply -f Deployment-Service.yaml
+
+    - name: Expose service
+      run: minikube service webapp-service
