@@ -88,3 +88,6 @@ jobs:
 
     - name: Wait for deployment to be available
       run: kubectl rollout status deployment/webapp-deployment
+
+    - name: Check pods status
+      run: kubectl get pods
