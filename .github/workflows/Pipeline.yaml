@@ -80,5 +80,11 @@ jobs:
     - name: Apply Kubernetes Deployment
       run: kubectl apply -f Deployment-Service.yaml
 
-    - name: Expose service
-      run: minikube service webapp-service
+    - name: Check pods status
+      run: kubectl get pods
+
+    - name: Check services status
+      run: kubectl get services
+
+    - name: Wait for deployment to be available
+      run: kubectl rollout status deployment/your-deployment-name
